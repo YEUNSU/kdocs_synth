@@ -18,13 +18,20 @@ def generate_hanja_name(name):
     """
     # 일반적인 이름에 사용되는 한자 목록
     hanja_chars = "明俊瑞娟智宇道潤夏恩秀斌"
-    # 성씨에 대한 한자 매핑
-    surname_map = {'김': '金', '이': '李', '박': '朴', '최': '崔', '정': '鄭', '강': '姜', '조': '趙', '윤': '尹', '장': '張'}
+    # 성씨에 대한 한자 매핑 (더 많은 성씨 추가)
+    surname_map = {
+        '김': '金', '이': '李', '박': '朴', '최': '崔', '정': '鄭', '강': '姜', '조': '趙', '윤': '尹', '장': '張',
+        '서': '徐', '지': '池', '한': '韓', '안': '安', '양': '梁', '손': '孫', '배': '裵', '고': '高', '문': '文',
+        '송': '宋', '임': '林', '전': '全', '오': '吳', '백': '白', '남': '南', '심': '沈', '노': '盧', '하': '河',
+        '곽': '郭', '성': '成', '차': '車', '주': '周', '위': '韋', '구': '具', '신': '申', '국': '國', '태': '太',
+        '공': '孔', '마': '馬', '반': '潘', '민': '閔', '엄': '嚴', '백': '白', '남': '南', '심': '沈', '노': '盧',
+        '남궁': '南宮', '사공': '司空', '제갈': '諸葛'
+    }
     
     surname = name[0]
     given_name = name[1:]
     
-    hanja_surname = surname_map.get(surname, '〇')
+    hanja_surname = surname_map.get(surname, surname)  # 매핑이 없으면 원래 성씨 그대로
     hanja_given_name = "".join(random.choices(hanja_chars, k=len(given_name)))
     
     return f"{hanja_surname}{hanja_given_name}"
@@ -63,7 +70,7 @@ def create_person(relationship, min_age=0, max_age=80):
     gender = random.choice(["남", "여"])
     birthdate = generate_date(start_date, end_date)
     
-    return {
+    person_data = {
         "RELATION": relationship,
         "NAME": name,
         "NAME_CN": generate_hanja_name(name),
@@ -72,11 +79,13 @@ def create_person(relationship, min_age=0, max_age=80):
         "JUMIN": generate_jumin(birthdate, gender),
         "GENDER": gender,
         "ORIGIN": random.choice(["김해", "전주", "경주", "밀양", "안동"]), # 본관 예시
-        "NUMBER": "", # 주민등록등본용 번호
         "REPORT_DATE": generate_date(datetime.strptime(birthdate, "%Y.%m.%d"), datetime.now()),
         "STATUS": "거주자",
         "CHANGE_REASON": random.choice(["전입", "출생등록"])
     }
+    
+    # 주민등록등본용 번호는 나중에 추가
+    return person_data
 
 def create_record(doc_type="GA", options=None):
     """
@@ -111,8 +120,8 @@ def create_record(doc_type="GA", options=None):
         record.update({f"PARENT1_{k}": v for k, v in create_person("부", min_age=main_birth_year - 1960, max_age=main_birth_year - 1930).items()})
         record.update({f"PARENT2_{k}": v for k, v in create_person("모", min_age=main_birth_year - 1965, max_age=main_birth_year - 1935).items()})
 
-        if random.random() > 0.3:
-             record.update({f"SPOUSE_{k}": v for k, v in create_person("배우자", min_age=25, max_age=55).items()})
+        # 배우자 항상 생성
+        record.update({f"SPOUSE_{k}": v for k, v in create_person("배우자", min_age=25, max_age=55).items()})
 
         for i in range(children_count):
             record.update({f"CHILD{i+1}_{k}": v for k, v in create_person("자녀", min_age=0, max_age=24).items()})
@@ -139,10 +148,24 @@ def create_record(doc_type="GA", options=None):
 
 # --- 테스트용 실행 블록 ---
 if __name__ == '__main__':
+    import json
+    from datetime import datetime
+    
+    # 결과 저장할 디렉토리 생성
+    import os
+    output_dir = "data"
+    os.makedirs(output_dir, exist_ok=True)
+    
     print("--- [Test] 가족관계증명서 데이터 생성 (자녀 2명) ---")
     ga_record = create_record(doc_type="GA", options={"children_count": 2})
     for key, value in ga_record.items():
         print(f"{key:<20}: {value}")
+    
+    # 가족관계증명서 데이터를 JSON 파일로 저장
+    ga_filename = f"data/ga_data_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+    with open(ga_filename, 'w', encoding='utf-8') as f:
+        json.dump(ga_record, f, ensure_ascii=False, indent=2)
+    print(f"\n[저장됨] 가족관계증명서 데이터: {ga_filename}")
         
     print("\n" + "="*50 + "\n")
     
@@ -150,3 +173,14 @@ if __name__ == '__main__':
     ju_record = create_record(doc_type="JU", options={"members_count": 4})
     for key, value in ju_record.items():
         print(f"{key:<20}: {value}")
+    
+    # 주민등록등본 데이터를 JSON 파일로 저장
+    ju_filename = f"data/ju_data_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+    with open(ju_filename, 'w', encoding='utf-8') as f:
+        json.dump(ju_record, f, ensure_ascii=False, indent=2)
+    print(f"\n[저장됨] 주민등록등본 데이터: {ju_filename}")
+    
+    print(f"\n=== 생성 완료 ===")
+    print(f"가족관계증명서: {ga_filename}")
+    print(f"주민등록등본: {ju_filename}")
+    print(f"데이터 폴더: {output_dir}/")
