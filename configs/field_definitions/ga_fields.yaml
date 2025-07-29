@@ -1,0 +1,58 @@
+# configs/field_definitions/ga_fields.yaml
+
+doc_type: "가족관계증명서 (GA)"
+template_folder: "GA" # assets/templates/ 하위 폴더 이름
+
+# 필드 이름 목록
+fields:
+  - BASE_ADDRESS
+  - APPLICANT
+  - MAIN_RELATION
+  - MAIN_NAME
+  - MAIN_BIRTH
+  - MAIN_JUMIN
+  - MAIN_GENDER
+  - MAIN_ORIGIN
+  - PARENT1_RELATION
+  - PARENT1_NAME
+  - PARENT1_BIRTH
+  - PARENT1_JUMIN
+  - PARENT1_GENDER
+  - PARENT1_ORIGIN
+  - PARENT2_RELATION
+  - PARENT2_NAME
+  - PARENT2_BIRTH
+  - PARENT2_JUMIN
+  - PARENT2_GENDER
+  - PARENT2_ORIGIN
+  - SPOUSE_RELATION
+  - SPOUSE_NAME
+  - SPOUSE_BIRTH
+  - SPOUSE_JUMIN
+  - SPOUSE_GENDER
+  - SPOUSE_ORIGIN
+  - CHILD1_RELATION
+  - CHILD1_NAME
+  - CHILD1_BIRTH
+  - CHILD1_JUMIN
+  - CHILD1_GENDER
+  - CHILD1_ORIGIN
+  - CHILD2_RELATION
+  - CHILD2_NAME
+  - CHILD2_BIRTH
+  - CHILD2_JUMIN
+  - CHILD2_GENDER
+  - CHILD2_ORIGIN
+  - CHILD3_RELATION
+  - CHILD3_NAME
+  - CHILD3_BIRTH
+  - CHILD3_JUMIN
+  - CHILD3_GENDER
+  - CHILD3_ORIGIN
+
+# 이 문서 종류에만 해당하는 특별한 계산 로직
+custom_logic:
+  - type: calculate_row_height
+    name: row_height_child
+    from: CHILD1_NAME
+    to: CHILD2_NAME
