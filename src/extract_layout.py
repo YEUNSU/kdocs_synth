@@ -156,11 +156,15 @@ class LayoutExtractor:
             traceback.print_exc() # [추가됨] 디버깅을 위한 상세 에러 로그
             quit_flag = True
         finally:
-            # 정상 종료 시 최종 저장
-            self._save_layouts()
-            if self.current_autosave_file and os.path.exists(os.path.join(CONFIG_DIR, self.current_autosave_file)):
-                print(f"\n[i] Work also saved in autosave file: {self.current_autosave_file}")
-                print(f"[i] You can load this file next time if needed.")
+            # Ctrl+Q로 종료한 경우 저장하지 않음
+            if not hasattr(self, 'exit_without_save') or not self.exit_without_save:
+                # 정상 종료 시 최종 저장
+                self._save_layouts()
+                if self.current_autosave_file and os.path.exists(os.path.join(CONFIG_DIR, self.current_autosave_file)):
+                    print(f"\n[i] Work also saved in autosave file: {self.current_autosave_file}")
+                    print(f"[i] You can load this file next time if needed.")
+            else:
+                print("\n[i] Exited without saving.")
             cv2.destroyAllWindows()
 
 
@@ -449,7 +453,14 @@ class LayoutExtractor:
             self._cycle_to_next_field(-1) if self.tab_cycling else self._start_tab_cycling()
 
         elif 32 <= key <= 126: # Printable ASCII
-            char = chr(key) # Keep case for now, will be uppered later if needed
+            # SHIFT 키 감지 및 대문자 처리
+            if 65 <= key <= 90:  # A-Z (대문자)
+                char = chr(key)
+            elif 97 <= key <= 122:  # a-z (소문자)
+                char = chr(key).upper()  # 소문자를 대문자로 변환
+            else:
+                char = chr(key)  # 기타 문자는 그대로
+            
             if self.suggestion_active:
                 self.input_text = char; self.suggestion_active = False
                 self._reset_tab_cycling()
@@ -468,6 +479,12 @@ class LayoutExtractor:
         print("\n[CONFIRMATION] Press ESC again to exit, or any other key to continue.")
 
     def _handle_command_mode(self, key):
+        # Ctrl+Q: 저장하지 않고 종료
+        if key == 17:  # Ctrl+Q (Ctrl=17)
+            print("\n[EXIT] Exiting without saving...")
+            self.exit_without_save = True
+            return True
+        
         if key in [ord('q'), ord('Q')]:
             self._show_exit_confirmation()
             return False

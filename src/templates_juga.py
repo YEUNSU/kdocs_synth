@@ -442,19 +442,32 @@ class GACertificateTemplate(BaseTemplate):
 class JUCertificateTemplate(BaseTemplate):
     """주민등록등본 템플릿 클래스"""
     
-    def __init__(self, template_path: str, layout_path: str, field_def_path: str):
+    def __init__(self, template_path: str, layout_path: str, field_def_path: str, max_members: int = None, mask_jumin: bool = True):
         super().__init__(template_path, layout_path, field_def_path)
         
         # 세대원 수 계산
-        self.members_count = self._calculate_members_count()
+        self.max_members_from_template = self._calculate_members_count()
+        
+        # 최대 세대원 수 설정 (외부에서 제한 가능)
+        if max_members is not None:
+            self.members_count = min(max_members, self.max_members_from_template)
+        else:
+            self.members_count = self.max_members_from_template
+        
+        # 주민번호 마스킹 여부 설정
+        self.mask_jumin = mask_jumin
         
     def _calculate_members_count(self) -> int:
         """템플릿에서 세대원 필드 수를 계산합니다."""
+        import re
         members_count = 0
         for field_name in self.field_boxes.keys():
             if field_name.startswith('MEMBER') and field_name.endswith('_NAME'):
-                member_num = int(field_name[6])  # MEMBER1_NAME -> 1
-                members_count = max(members_count, member_num)
+                # MEMBER1_NAME -> 1, MEMBER10_NAME -> 10
+                match = re.match(r'MEMBER(\d+)_NAME$', field_name)
+                if match:
+                    member_num = int(match.group(1))
+                    members_count = max(members_count, member_num)
         return members_count
     
     def render(self, data: Dict[str, str]) -> np.ndarray:
@@ -464,9 +477,13 @@ class JUCertificateTemplate(BaseTemplate):
         
         for field_name, field_value in data.items():
             if field_name.startswith('MEMBER'):
-                member_num = int(field_name[6])  # MEMBER1_NAME -> 1
-                if member_num <= self.members_count:
-                    filtered_data[field_name] = field_value
+                # MEMBER1_NAME -> 1, MEMBER10_NAME -> 10
+                import re
+                match = re.match(r'MEMBER(\d+)', field_name)
+                if match:
+                    member_num = int(match.group(1))
+                    if member_num <= self.members_count:
+                        filtered_data[field_name] = field_value
             else:
                 filtered_data[field_name] = field_value
         
@@ -478,7 +495,10 @@ class JUCertificateTemplate(BaseTemplate):
         
         # 각 필드에 텍스트 렌더링 (주민등록등본 특화)
         for field_name, field_value in filtered_data.items():
-            if field_name in self.field_boxes and (field_value or field_name.endswith('_NAME_CN')):
+            if field_name in self.field_boxes:
+                # 디버깅: MEMBER 필드 렌더링 확인
+                if field_name.startswith('MEMBER'):
+                    print(f"DEBUG: Rendering {field_name} = '{field_value}'")
                 
                 # 발생일/신고일 형식 변경 (원본처럼 YYYY-MM-DD 형식 유지)
                 if field_name.endswith('_EVENT_DATE') or field_name.endswith('_REPORT_DATE'):
@@ -521,10 +541,10 @@ class JUCertificateTemplate(BaseTemplate):
                         # MEMBER들의 NAME_CN은 스페이스 2개 + 한자 + 스페이스 30개
                         field_value = f"( {field_value}                              )"
                 
-                # 주민등록번호 마스킹 처리
+                # 주민등록번호 마스킹 처리 (mask_jumin 플래그에 따라 조건적으로)
                 elif field_name.endswith('_JUMIN'):
-                    # 뒷자리 마스킹 (890918-1******)
-                    if len(field_value) == 14 and '-' in field_value:  # 전체 형식인 경우
+                    # mask_jumin이 True이고 전체 형식인 경우에만 마스킹 적용
+                    if self.mask_jumin and len(field_value) == 14 and '-' in field_value:
                         front_part = field_value[:8]  # 890918-1
                         field_value = f"{front_part}******"
                 
@@ -605,6 +625,10 @@ class JUCertificateTemplate(BaseTemplate):
                 elif field_name.endswith('_EVENT_DATE') or field_name.endswith('_REPORT_DATE'):
                     adjusted_font_size = int(base_font_size * 0.8)  # 20% 더 작게
                 
+                # 세대구성 사유 및 일자는 기본 크기
+                elif field_name in ['HOUSEHOLD_REASON', 'HOUSEHOLD_DATE']:
+                    adjusted_font_size = base_font_size  # 기본 크기 사용
+                
                 # 정렬 방식 결정
                 if field_name == 'MAIN_ADDRESS':
                     align = 'left'
@@ -614,6 +638,8 @@ class JUCertificateTemplate(BaseTemplate):
                     align = 'left'  # 이름, 주민번호, 신청인, 신청인생년월일은 왼쪽 정렬로 같은 라인 시작
                 elif field_name.endswith('_NAME_CN'):
                     align = 'left'  # 한자명은 왼쪽 정렬
+                elif field_name in ['HOUSEHOLD_REASON', 'HOUSEHOLD_DATE']:
+                    align = 'left'  # 세대구성 사유 및 일자는 왼쪽 정렬
                 elif field_name.endswith('_GENDER') or field_name.endswith('_RELATION') or len(field_value) <= 3:
                     align = 'center_precise'
                 else:
@@ -637,7 +663,7 @@ class JUCertificateTemplate(BaseTemplate):
         return result_img
 
 
-def create_template(doc_type: str, template_name: str) -> BaseTemplate:
+def create_template(doc_type: str, template_name: str, max_members: int = None, mask_jumin: bool = True) -> BaseTemplate:
     """문서 타입에 따라 적절한 템플릿 객체를 생성합니다."""
     
     # 템플릿 경로 구성
@@ -657,7 +683,7 @@ def create_template(doc_type: str, template_name: str) -> BaseTemplate:
     if doc_type == "GA":
         return GACertificateTemplate(template_path, layout_path, field_def_path)
     elif doc_type == "JU":
-        return JUCertificateTemplate(template_path, layout_path, field_def_path)
+        return JUCertificateTemplate(template_path, layout_path, field_def_path, max_members, mask_jumin)
     else:
         raise ValueError(f"지원하지 않는 문서 타입입니다: {doc_type}")
 

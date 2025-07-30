@@ -8,12 +8,13 @@ from data_factory import create_record
 class DocumentRotator:
     """문서 회전 및 대량 생성 클래스"""
     
-    def __init__(self):
+    def __init__(self, doc_type: str = "GA"):
+        self.doc_type = doc_type
         self.rotation_config = {
-            0: {"name": "0", "angle": 0, "prefix": "GA-0"},
-            90: {"name": "L", "angle": 90, "prefix": "GA-L"},  # 왼쪽 90도
-            -90: {"name": "R", "angle": -90, "prefix": "GA-R"},  # 오른쪽 90도
-            180: {"name": "180", "angle": 180, "prefix": "GA-180"}
+            0: {"name": "0", "angle": 0, "prefix": f"{doc_type}-0"},
+            90: {"name": "L", "angle": 90, "prefix": f"{doc_type}-L"},  # 왼쪽 90도
+            -90: {"name": "R", "angle": -90, "prefix": f"{doc_type}-R"},  # 오른쪽 90도
+            180: {"name": "180", "angle": 180, "prefix": f"{doc_type}-180"}
         }
     
     def rotate_document(self, image: np.ndarray, angle: int) -> np.ndarray:
@@ -215,6 +216,47 @@ class DocumentRotator:
         
         print(f"매니페스트 파일 생성: {manifest_path}")
         return manifest_path
+
+    def save_rotations(self, image: np.ndarray, output_dir: str, 
+                      base_filename: str, file_counter: Dict, extra_suffix: str = "") -> List[str]:
+        """이미지를 4방향 회전하여 저장합니다."""
+        
+        generated_files = []
+        os.makedirs(output_dir, exist_ok=True)
+        
+        # 각 회전별로 저장
+        rotations = [
+            {"angle": 0, "suffix": "0"},
+            {"angle": 90, "suffix": "L"},     # 왼쪽 90도
+            {"angle": -90, "suffix": "R"},    # 오른쪽 90도  
+            {"angle": 180, "suffix": "180"}
+        ]
+        
+        for rotation in rotations:
+            angle = rotation["angle"]
+            suffix = rotation["suffix"]
+            
+            # 회전 적용
+            rotated_image = self.rotate_document(image, angle)
+            
+            # 파일명 생성: JU-0-OPEN-0001.jpg 형식
+            if extra_suffix and isinstance(file_counter[suffix], dict):
+                index = file_counter[suffix][extra_suffix]
+                filename = f"{base_filename}-{suffix}-{extra_suffix}-{index:04d}.jpg"
+                file_counter[suffix][extra_suffix] += 1
+            else:
+                index = file_counter[suffix] if isinstance(file_counter[suffix], int) else 1
+                filename = f"{base_filename}-{suffix}-{index:04d}.jpg"
+                if isinstance(file_counter[suffix], int):
+                    file_counter[suffix] += 1
+                    
+            output_path = os.path.join(output_dir, filename)
+            
+            # 저장
+            cv2.imwrite(output_path, rotated_image)
+            generated_files.append(output_path)
+            
+        return generated_files
 
 
 def main():

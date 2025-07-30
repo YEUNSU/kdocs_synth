@@ -29,6 +29,16 @@ field_boxes:
     - 235
     - 549
     - 287
+    HOUSEHOLD_REASON:
+    - 714
+    - 235
+    - 948
+    - 262
+    HOUSEHOLD_DATE:
+    - 714
+    - 255
+    - 950
+    - 285
     MAIN_ADDRESS:
     - 130
     - 334
@@ -271,6 +281,6 @@ field_boxes:
     - 727
 meta:
     source_image: JU_template1_TY11.jpg
-    extraction_date: '2025-07-30 16:23:09'
+    extraction_date: '2025-07-30 23:05:20'
     doc_type: 주민등록등본 (JU)
-    field_count: 54
+    field_count: 56
