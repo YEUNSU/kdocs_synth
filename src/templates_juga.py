@@ -496,9 +496,7 @@ class JUCertificateTemplate(BaseTemplate):
         # 각 필드에 텍스트 렌더링 (주민등록등본 특화)
         for field_name, field_value in filtered_data.items():
             if field_name in self.field_boxes:
-                # 디버깅: MEMBER 필드 렌더링 확인
-                if field_name.startswith('MEMBER'):
-                    print(f"DEBUG: Rendering {field_name} = '{field_value}'")
+
                 
                 # 발생일/신고일 형식 변경 (원본처럼 YYYY-MM-DD 형식 유지)
                 if field_name.endswith('_EVENT_DATE') or field_name.endswith('_REPORT_DATE'):

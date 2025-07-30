@@ -239,7 +239,7 @@ class DocumentRotator:
             # 회전 적용
             rotated_image = self.rotate_document(image, angle)
             
-            # 파일명 생성: JU-0-OPEN-0001.jpg 형식
+            # 파일명 생성: GA-0-MASK-0001.jpg 형식
             if extra_suffix and isinstance(file_counter[suffix], dict):
                 index = file_counter[suffix][extra_suffix]
                 filename = f"{base_filename}-{suffix}-{extra_suffix}-{index:04d}.jpg"
