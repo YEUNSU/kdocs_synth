@@ -1,17 +1,32 @@
 field_boxes:
+    ISSUER_TOP:
+    - 691
+    - 198
+    - 948
+    - 235
+    ISSUER_BOTTOM:
+    - 538
+    - 1090
+    - 850
+    - 1140
     APPLICANT:
     - 530
-    - 137
+    - 131
     - 654
     - 159
+    APPLICANT_BIRTH:
+    - 650
+    - 122
+    - 850
+    - 159
     MAIN_NAME:
-    - 238
-    - 237
-    - 397
+    - 239
+    - 235
+    - 388
     - 285
     MAIN_NAME_CN:
     - 397
-    - 239
+    - 235
     - 549
     - 287
     MAIN_ADDRESS:
@@ -36,18 +51,18 @@ field_boxes:
     - 529
     MEMBER1_RELATION:
     - 130
-    - 479
+    - 477
     - 224
     - 531
     MEMBER1_NAME:
-    - 224
+    - 220
     - 479
-    - 346
+    - 370
     - 507
     MEMBER1_JUMIN:
-    - 226
-    - 505
-    - 345
+    - 220
+    - 503
+    - 370
     - 531
     MEMBER1_NAME_CN:
     - 345
@@ -66,7 +81,7 @@ field_boxes:
     - 508
     MEMBER1_STATUS:
     - 552
-    - 507
+    - 500
     - 808
     - 529
     MEMBER1_CHANGE_REASON:
@@ -81,18 +96,18 @@ field_boxes:
     - 578
     MEMBER2_RELATION:
     - 129
-    - 530
+    - 527
     - 226
     - 579
     MEMBER2_NAME:
-    - 226
+    - 220
     - 529
-    - 345
+    - 370
     - 556
     MEMBER2_JUMIN:
-    - 227
-    - 553
-    - 346
+    - 220
+    - 551
+    - 370
     - 581
     MEMBER2_NAME_CN:
     - 344
@@ -111,7 +126,7 @@ field_boxes:
     - 556
     MEMBER2_STATUS:
     - 548
-    - 554
+    - 547
     - 807
     - 582
     MEMBER2_CHANGE_REASON:
@@ -126,18 +141,18 @@ field_boxes:
     - 628
     MEMBER3_RELATION:
     - 128
-    - 579
+    - 575
     - 226
     - 629
     MEMBER3_NAME:
-    - 226
+    - 220
     - 577
-    - 346
+    - 370
     - 606
     MEMBER3_JUMIN:
-    - 225
-    - 606
-    - 344
+    - 220
+    - 604
+    - 370
     - 628
     MEMBER3_NAME_CN:
     - 346
@@ -156,7 +171,7 @@ field_boxes:
     - 606
     MEMBER3_STATUS:
     - 545
-    - 605
+    - 598
     - 806
     - 628
     MEMBER3_CHANGE_REASON:
@@ -171,18 +186,18 @@ field_boxes:
     - 674
     MEMBER4_RELATION:
     - 130
-    - 628
+    - 624
     - 225
     - 677
     MEMBER4_NAME:
-    - 225
+    - 220
     - 628
-    - 344
+    - 370
     - 652
     MEMBER4_JUMIN:
-    - 225
-    - 651
-    - 344
+    - 220
+    - 649
+    - 370
     - 677
     MEMBER4_NAME_CN:
     - 345
@@ -201,7 +216,7 @@ field_boxes:
     - 655
     MEMBER4_STATUS:
     - 545
-    - 652
+    - 645
     - 804
     - 677
     MEMBER4_CHANGE_REASON:
@@ -216,18 +231,18 @@ field_boxes:
     - 727
     MEMBER5_RELATION:
     - 128
-    - 677
+    - 672
     - 225
     - 727
     MEMBER5_NAME:
-    - 223
+    - 220
     - 674
-    - 344
+    - 370
     - 703
     MEMBER5_JUMIN:
-    - 223
-    - 703
-    - 344
+    - 220
+    - 699
+    - 370
     - 726
     MEMBER5_NAME_CN:
     - 343
@@ -246,7 +261,7 @@ field_boxes:
     - 701
     MEMBER5_STATUS:
     - 547
-    - 704
+    - 697
     - 802
     - 727
     MEMBER5_CHANGE_REASON:
@@ -256,6 +271,6 @@ field_boxes:
     - 727
 meta:
     source_image: JU_template1_TY11.jpg
-    extraction_date: '2025-07-29 22:18:35'
+    extraction_date: '2025-07-30 16:23:09'
     doc_type: 주민등록등본 (JU)
-    field_count: 51
+    field_count: 54

@@ -5,7 +5,10 @@ template_folder: "JU" # assets/templates/ 하위 폴더 이름
 
 # 필드 이름 목록
 fields:
+  - ISSUER_TOP
+  - ISSUER_BOTTOM
   - APPLICANT
+  - APPLICANT_BIRTH
   - MAIN_NAME
   - MAIN_NAME_CN
   - MAIN_ADDRESS

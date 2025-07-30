@@ -1,110 +1,187 @@
-# KDOCS_SYNTH
+# 한국 문서 템플릿 자동 생성 시스템 🇰🇷
 
-한국 공문서 합성 데이터 생성 프로젝트
+AI를 활용한 한국 공식 문서 템플릿 자동 생성 및 합성 시스템입니다.
+가족관계증명서와 주민등록등본을 실제와 유사하게 생성하면서도 완전한 가짜 데이터를 사용하여 개인정보를 보호합니다.
 
-## 📋 프로젝트 개요
+## 🎯 주요 기능
 
-GA(가족관계증명서)와 JU(주민등록표) 양식에 합성 데이터를 생성하여 ML/AI 학습용 데이터셋을 제작하는 프로젝트입니다.
+### 📋 지원 문서 유형
+- **가족관계증명서 (GA)**: 본인, 부모, 배우자, 자녀 정보 포함
+- **주민등록등본 (JU)**: 세대주 및 세대원 정보 포함
 
-## 🚀 환경 설정
+### 🔐 개인정보 보호
+- **완전 가짜 이름**: 한국어 음절 조합으로 자연스럽지만 가짜인 이름 생성
+- **무작위 숫자**: 실제 날짜/주민번호와 겹치지 않는 완전 랜덤 숫자
+- **가짜 한자명**: 의미 있는 한자 조합으로 실제감 있는 한자명 생성
 
-### 1. Python 환경 요구사항
-- Python >= 3.9
-- UV 패키지 관리자 (권장)
-
-### 2. UV를 사용한 패키지 설치
-
-```bash
-# 핵심 패키지 설치
-uv add opencv-contrib-python Pillow numpy PyYAML
-
-# 추가 패키지 설치
-uv add synthtiger faker timm albumentations
-```
-
-### 3. 전통적인 pip 설치 (대안)
-
-```bash
-pip install opencv-contrib-python Pillow numpy PyYAML synthtiger faker timm albumentations
-```
+### 🎨 시각적 완성도
+- **정밀한 레이아웃**: YAML 설정으로 픽셀 단위 위치 조정
+- **한국어 폰트**: KoPub World Batang Medium 폰트 사용
+- **시각화 도구**: 필드 박스 표시로 레이아웃 검증 가능
 
 ## 📁 프로젝트 구조
 
 ```
 kdocs_synth/
-├─ assets/
-│    ├─ fonts/         # mt.ttf (문체부 바탕체)
-│    ├─ templates/     # GA, JU 빈 양식 이미지
-│    └─ samples/       # 좌표 추출용 채워진 샘플
-├─ configs/           # 좌표 YAML 파일
-├─ manifests/         # manifest.csv
-├─ scripts/           # 보조 스크립트 (extract_layout.py)
-├─ src/               # 메인 소스 코드
-├─ tests/             # 검수 스크립트
-└─ data/              # 생성된 합성 데이터
+├── src/                          # 핵심 소스 코드
+│   ├── templates_juga.py         # 템플릿 렌더링 엔진
+│   ├── data_factory.py           # 가짜 데이터 생성기
+│   ├── extract_layout.py         # 레이아웃 추출 도구 (GUI)
+│   └── compare_methods.py        # 방법론 비교 도구
+├── configs/                      # 템플릿 설정 파일
+│   ├── field_definitions/        # 필드 정의
+│   └── *_layout.yaml            # 레이아웃 좌표 설정
+├── assets/                       # 리소스 파일
+│   ├── templates/               # 원본 템플릿 이미지
+│   ├── fonts/                   # 한국어 폰트
+│   └── samples/                 # 샘플 이미지
+└── outputs/                      # 생성 결과물
+    ├── dataset/                 # 대량 생성 데이터셋
+    └── test_*.jpg               # 테스트 결과 이미지
 ```
 
-## 🎯 사용 방법
+## 🚀 빠른 시작
 
-### 1. 좌표 추출
+### 1. 환경 설정
 ```bash
-python scripts/extract_layout.py
+# 의존성 설치
+pip install pillow opencv-python numpy pyyaml faker
+
+# 한국어 패키지 설치
+pip install faker[ko-KR]
 ```
 
-### 2. 합성 데이터 생성
+### 2. 단일 문서 생성
 ```bash
-python src/launcher.py
+python src/templates_juga.py
 ```
 
-### 3. 검수 및 테스트
+### 3. 대량 데이터셋 생성
 ```bash
-python tests/preview_boxes.py    # 좌표 시각 검증
-python tests/test_counts.py      # 이미지 수 검증
-python tests/test_hanja.py       # 한자 검증
+python main.py
 ```
 
-## 📋 템플릿 파일명 규칙
+## 📊 결과물 예시
 
-### GA (가족관계증명서)
-- **빈 양식**: `GA_template<stamp_no>_child<cnt>`
-  - `stamp_no`: 1 또는 2 (도장 버전)
-  - `cnt`: 0, 1, 2, 3 (자녀 행 수)
-  - 예: `GA_template1_child0`, `GA_template2_child3`
+### 주민등록등본 (JU)
+![주민등록등본 결과](outputs/test_ju_output.jpg)
 
-### JU (주민등록표)
-- **빈 양식**: `JU_template<region>_TY<top><bottom>`
-  - `region`: 1, 2, 3 (지역)
-  - `top`, `bottom`: 1=표시(O), 0=미표시(X)
-  - 예: `JU_template1_TY11`, `JU_template3_TY00`
+**특징:**
+- 신청인과 생년월일이 같은 라인에 정렬
+- 한자명에 적절한 스페이스 배치: `(  한자명                       )`
+- 완전 무작위 날짜: `3847.52.19` 형식
+- 실제 변동사유: 전입(50%), 전출(20%), 출생등록(10%) 등
 
-### 최종 저장 파일
-- **저장 파일명**: `<DOC>-<ROT>-<INDEX:04d>.jpg`
-  - `DOC`: GA 또는 JU
-  - `ROT`: 0(정상), L(왼쪽90°), R(오른쪽90°), 180(180°)
-  - `INDEX`: 각 회전별 1부터 시작하는 4자리 인덱스
+### 가족관계증명서 (GA)
+![가족관계증명서 결과](outputs/test_ga_output.jpg)
 
-## 🔧 개발 단계
+**특징:**
+- 본인, 부모, 배우자, 자녀 관계 표현
+- 생년월일 한국어 형식: `1987년 11월 23일`
+- 본관 한자 표기: `金海`, `全州` 등
 
-1. ✅ **환경 설정** - Python, UV, 패키지 설치
-2. ✅ **자산 준비** - 폰트, 템플릿, 샘플 이미지
-3. 🔄 **좌표 추출** - extract_layout.py 실행
-4. ⏳ **데이터 생성 헬퍼** - data_factory.py 구현
-5. ⏳ **템플릿 클래스** - templates_juga.py 구현
-6. ⏳ **매니페스트 작성** - manifest.csv
-7. ⏳ **런처 및 회전** - launcher.py, rotator.py
-8. ⏳ **검수 및 테스트** - tests/ 스크립트들
+### 레이아웃 시각화
+![레이아웃 박스](outputs/test_ju_boxes.jpg)
 
-## 📦 주요 의존성
+## ⚙️ 주요 설정
 
-- **opencv-contrib-python**: 이미지 처리
-- **Pillow**: 이미지 조작
-- **numpy**: 수치 계산
-- **PyYAML**: 설정 파일 처리
-- **synthtiger**: 텍스트 합성
-- **faker**: 가짜 데이터 생성
-- **timm**: 모델 라이브러리
-- **albumentations**: 이미지 증강
+### 데이터 생성 설정
+```python
+# src/data_factory.py
+def generate_name():
+    """한국어 음절 조합으로 가짜 이름 생성"""
+    surname_syllables = ["강", "갑", "갈", ...]
+    name_syllables = ["가", "간", "갈", ...]
+    
+def generate_date():
+    """완전 무작위 숫자로 가짜 날짜 생성"""
+    return f"{random.randint(1000, 9999)}.{random.randint(10, 99)}.{random.randint(10, 99)}"
+```
+
+### 레이아웃 설정
+```yaml
+# configs/JU_template1_TY11_layout.yaml
+field_boxes:
+  APPLICANT:
+    - 530  # x1
+    - 137  # y1  
+    - 654  # x2
+    - 159  # y2
+  APPLICANT_BIRTH:
+    - 700  # 신청인과 같은 라인
+    - 137
+    - 850
+    - 159
+```
+
+## 🔧 커스터마이징
+
+### 1. 새로운 템플릿 추가
+1. `assets/templates/` 에 템플릿 이미지 추가
+2. `extract_layout.py` GUI 도구로 필드 위치 추출
+3. `configs/` 에 레이아웃 YAML 파일 생성
+4. `templates_juga.py` 에 템플릿 클래스 추가
+
+### 2. 데이터 형식 변경
+- `data_factory.py` 에서 생성 함수 수정
+- 변동사유, 이름 패턴, 날짜 형식 등 조정 가능
+
+### 3. 폰트 및 스타일 조정
+- `templates_juga.py` 에서 폰트 크기, 색상, 정렬 방식 수정
+- 각 필드별 세밀한 조정 가능
+
+## 📈 개발 과정
+
+### 1단계: 기본 템플릿 구축 ✅
+- 원본 템플릿 이미지 준비
+- 기본 텍스트 렌더링 시스템 구축
+- YAML 설정 시스템 도입
+
+### 2단계: 레이아웃 정밀 조정 ✅
+- 픽셀 단위 위치 미세 조정
+- 신청인-날짜 라인 정렬
+- 이름-주민번호 세로 정렬
+- 한자명 스페이스 최적화
+
+### 3단계: 개인정보 보호 강화 ✅
+- 실제 이름 → 한국어 음절 조합 가짜 이름
+- 실제 날짜 → 완전 무작위 숫자
+- 실제 주민번호 → 의미 없는 랜덤 번호
+
+### 4단계: 시각적 완성도 향상 ✅
+- 글자 색상 진하게 조정 (60,60,60) → (30,30,30)
+- 폰트 크기 최적화
+- 한자명 괄호 내 스페이스 조정
+
+## 🛡️ 개인정보 보호 정책
+
+이 시스템은 **100% 가짜 데이터**만을 사용합니다:
+
+- ❌ **실제 이름**: 사용하지 않음
+- ❌ **실제 주민번호**: 사용하지 않음  
+- ❌ **실제 주소**: faker 라이브러리 가짜 주소 사용
+- ❌ **실제 날짜**: 완전 무작위 숫자 사용
+
+✅ **AI 학습, 테스트, 데모 목적으로 안전하게 사용 가능**
+
+## 🤝 기여 방법
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
 ## 📄 라이선스
 
-이 프로젝트는 연구 및 교육 목적으로만 사용됩니다. 
+이 프로젝트는 MIT 라이선스 하에 배포됩니다. 자세한 내용은 `LICENSE` 파일을 참조하세요.
+
+## 🙏 감사의 말
+
+- **KoPub World Batang** 폰트 제공
+- **Faker** 라이브러리를 통한 가짜 데이터 생성
+- **OpenCV & Pillow** 이미지 처리 라이브러리
+
+---
+
+**⚠️ 주의사항**: 이 시스템은 교육 및 연구 목적으로만 사용되어야 하며, 실제 공문서 위조나 불법적인 용도로 사용해서는 안 됩니다. 
