@@ -8,3 +8,19 @@ wheels/
 
 # Virtual environments
 .venv
+tests/
+
+# Generated images and outputs
+outputs/
+*.jpg
+*.jpeg
+*.png
+*.bmp
+*.tiff
+
+# Template images (if too large)
+# assets/templates/
+
+# Temporary files
+*.tmp
+*.temp
