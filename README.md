@@ -36,8 +36,19 @@ JU-1-CLOSE-0-00001.jpg   # 등본1, 주민번호미공개, 정상
 ## 🚀 설치 및 실행
 
 ### 1. 의존성 설치
+
+#### 방법 1: pip + requirements.txt (권장)
 ```bash
 pip install -r requirements.txt
+```
+
+#### 방법 2: uv + pyproject.toml
+```bash
+# uv 설치 (선택사항)
+pip install uv
+
+# 의존성 설치
+uv sync
 ```
 
 ### 2. 데이터셋 생성

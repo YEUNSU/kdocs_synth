@@ -1,0 +1,15 @@
+# KDOCS_SYNTH 프로젝트 의존성 패키지
+# Python 3.13 이상 필요
+
+# 이미지 처리
+opencv-contrib-python>=4.11.0.86
+pillow>=11.3.0
+
+# 데이터 처리
+numpy>=2.3.2
+
+# 설정 파일 처리
+pyyaml>=6.0.2
+
+# 가짜 데이터 생성
+faker>=22.0.0 
