@@ -1,4 +1,4 @@
-# KDOCS_SYNTH 시스템 지침
+# KDOCS_SYNTH 개발 가이드라인
 
 ## 🎯 프로젝트 목표
 한국 공문서 합성 데이터셋 생성기 - AI 문서 분류 모델 학습을 위한 가짜 공문서 이미지 생성
@@ -32,28 +32,6 @@
 
 ### 폰트
 - **KoPub World Batang Medium**: 한국어 텍스트 렌더링
-
-## 📁 프로젝트 구조
-
-```
-kdocs_synth/
-├── assets/              # 리소스 파일
-│   ├── fonts/          # 폰트 파일
-│   ├── samples/        # 샘플 이미지
-│   └── templates/      # 문서 템플릿
-├── configs/            # 설정 파일
-│   ├── field_definitions/  # 필드 정의
-│   └── *_layout.yaml   # 레이아웃 좌표
-├── src/                # 소스 코드
-│   ├── data_factory.py     # 데이터 생성
-│   ├── templates_juga.py   # 문서 렌더링
-│   ├── batch_generator.py  # 배치 생성
-│   ├── rotator.py          # 회전 처리
-│   └── extract_layout.py   # 레이아웃 추출
-├── outputs/            # 생성 결과물 (Git 제외)
-├── tests/              # 테스트 파일
-└── README.md           # 프로젝트 문서
-```
 
 ## 🎨 문서 유형
 
