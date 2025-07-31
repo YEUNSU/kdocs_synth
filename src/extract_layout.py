@@ -158,11 +158,11 @@ class LayoutExtractor:
         finally:
             # Ctrl+Q로 종료한 경우 저장하지 않음
             if not hasattr(self, 'exit_without_save') or not self.exit_without_save:
-                # 정상 종료 시 최종 저장
-                self._save_layouts()
-                if self.current_autosave_file and os.path.exists(os.path.join(CONFIG_DIR, self.current_autosave_file)):
-                    print(f"\n[i] Work also saved in autosave file: {self.current_autosave_file}")
-                    print(f"[i] You can load this file next time if needed.")
+            # 정상 종료 시 최종 저장
+            self._save_layouts()
+            if self.current_autosave_file and os.path.exists(os.path.join(CONFIG_DIR, self.current_autosave_file)):
+                print(f"\n[i] Work also saved in autosave file: {self.current_autosave_file}")
+                print(f"[i] You can load this file next time if needed.")
             else:
                 print("\n[i] Exited without saving.")
             cv2.destroyAllWindows()

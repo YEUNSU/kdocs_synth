@@ -147,7 +147,7 @@ def generate_jumin(birthdate_str, gender, mask_suffix=True):
     
     if mask_suffix:
         # 뒷자리 미공개: 123456-1******
-        return f"{fake_digits}-{gender_digit}******"
+    return f"{fake_digits}-{gender_digit}******"
     else:
         # 전부 공개: 123456-1234567
         fake_suffix = f"{random.randint(100000, 999999):06d}"
@@ -222,7 +222,7 @@ def create_record(doc_type="GA", options=None):
 
     # 주민번호 마스킹 설정 (기본값: 뒷자리 마스킹)
     mask_jumin = options.get("mask_jumin", True)
-    
+
     # --- 본인(MAIN) 정보 생성 ---
     main_person = create_person(relationship="본인", min_age=25, max_age=55, mask_jumin=mask_jumin)
     

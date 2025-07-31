@@ -467,7 +467,7 @@ class JUCertificateTemplate(BaseTemplate):
                 match = re.match(r'MEMBER(\d+)_NAME$', field_name)
                 if match:
                     member_num = int(match.group(1))
-                    members_count = max(members_count, member_num)
+                members_count = max(members_count, member_num)
         return members_count
     
     def render(self, data: Dict[str, str]) -> np.ndarray:
@@ -482,8 +482,8 @@ class JUCertificateTemplate(BaseTemplate):
                 match = re.match(r'MEMBER(\d+)', field_name)
                 if match:
                     member_num = int(match.group(1))
-                    if member_num <= self.members_count:
-                        filtered_data[field_name] = field_value
+                if member_num <= self.members_count:
+                    filtered_data[field_name] = field_value
             else:
                 filtered_data[field_name] = field_value
         
