@@ -49,7 +49,16 @@ python src/batch_generator_ga.py
 python src/batch_generator.py
 ```
 
-### 3. 레이아웃 추출 도구
+### 3. 회전 처리
+```bash
+# 0도 문서들을 L, R, 180도로 회전
+python src/rotation_processor.py
+
+# 또는 특정 디렉토리 지정
+python src/rotation_processor.py --input outputs/dataset --output outputs/dataset
+```
+
+### 4. 레이아웃 추출 도구
 ```bash
 python src/extract_layout.py
 ```
@@ -70,7 +79,8 @@ kdocs_synth/
 │   ├── templates_juga.py   # 문서 렌더링
 │   ├── batch_generator.py  # JU 배치 생성
 │   ├── batch_generator_ga.py  # GA 배치 생성
-│   ├── rotator.py          # 회전 처리
+│   ├── rotation_processor.py  # 회전 처리 (새로운)
+│   ├── rotator.py          # 회전 처리 (기존)
 │   └── extract_layout.py   # 레이아웃 추출
 ├── outputs/            # 생성 결과물 (Git 제외)
 ├── tests/              # 테스트 파일

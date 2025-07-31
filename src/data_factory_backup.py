@@ -131,13 +131,13 @@ def generate_date(start_date, end_date):
     
     return f"{part1}.{part2}.{part3}"
 
-def generate_jumin(birthdate_str, gender, jumin_disclosure="CLOSE"):
+def generate_jumin(birthdate_str, gender, mask_suffix=True):
     """ 완전히 무작위 숫자로 가짜 주민등록번호를 생성합니다. 
     
     Args:
         birthdate_str: 생년월일 (사용하지 않음, 완전 무작위)
         gender: 성별 (사용하지 않음, 완전 무작위)
-        jumin_disclosure: "OPEN"이면 전체 공개, "CLOSE"이면 뒷자리 마스킹
+        mask_suffix: True이면 뒷자리 마스킹, False이면 전체 공개
     """
     # 완전 임의의 6자리 숫자 (아무 의미 없음)
     fake_digits = f"{random.randint(100000, 999999):06d}"
@@ -145,11 +145,11 @@ def generate_jumin(birthdate_str, gender, jumin_disclosure="CLOSE"):
     # 임의의 성별 코드 (1-9, 더 다양하게)
     gender_digit = random.randint(1, 9)
     
-    if jumin_disclosure == "CLOSE":
+    if mask_suffix:
         # 뒷자리 미공개: 123456-1******
-        return f"{fake_digits}-{gender_digit}******"
+    return f"{fake_digits}-{gender_digit}******"
     else:
-        # 전체 공개: 123456-1234567
+        # 전부 공개: 123456-1234567
         fake_suffix = f"{random.randint(100000, 999999):06d}"
         return f"{fake_digits}-{gender_digit}{fake_suffix}"
 
@@ -177,14 +177,14 @@ def generate_household_data():
 
 # --- 핵심 함수: 데이터 레코드 생성 ---
 
-def create_person(relationship, min_age=0, max_age=80, jumin_disclosure="CLOSE"):
+def create_person(relationship, min_age=0, max_age=80, mask_jumin=True):
     """ 한 사람에 대한 데이터 묶음을 생성합니다. 
     
     Args:
         relationship: 관계 (본인, 부, 모, 자녀 등)
         min_age: 최소 연령 (사용하지 않음)
         max_age: 최대 연령 (사용하지 않음)
-        jumin_disclosure: "OPEN"이면 주민번호 전체 공개, "CLOSE"이면 뒷자리 마스킹
+        mask_jumin: True이면 주민번호 뒷자리 마스킹, False이면 전체 공개
     """
     name = generate_name()
     gender = random.choice(["남", "여"])
@@ -199,7 +199,7 @@ def create_person(relationship, min_age=0, max_age=80, jumin_disclosure="CLOSE")
             ["", "-------", "1212-23-23"],  # 빈칸, 대시, 날짜
             weights=[5, 42.5, 42.5]  # 가중치
         )[0], # 주민등록등본용 발생일
-        "JUMIN": generate_jumin(birthdate, gender, jumin_disclosure=jumin_disclosure),
+        "JUMIN": generate_jumin(birthdate, gender, mask_suffix=mask_jumin),
         "GENDER": gender,
         "ORIGIN": random.choice(["김해", "전주", "경주", "밀양", "안동"]), # 본관 예시
         "REPORT_DATE": generate_date(None, None),  # 무작위 날짜
@@ -220,11 +220,11 @@ def create_record(doc_type="GA", options=None):
     if options is None:
         options = {}
 
-    # 주민번호 공개 설정 (기본값: 뒷자리 마스킹)
-    jumin_disclosure = options.get("jumin_disclosure", "CLOSE")
+    # 주민번호 마스킹 설정 (기본값: 뒷자리 마스킹)
+    mask_jumin = options.get("mask_jumin", True)
 
     # --- 본인(MAIN) 정보 생성 ---
-    main_person = create_person(relationship="본인", min_age=25, max_age=55, jumin_disclosure=jumin_disclosure)
+    main_person = create_person(relationship="본인", min_age=25, max_age=55, mask_jumin=mask_jumin)
     
     # 최종적으로 반환될 데이터 딕셔너리
     record = {}
@@ -259,15 +259,15 @@ def create_record(doc_type="GA", options=None):
         children_count = options.get("children_count", random.randint(0, 3))
         
         main_birth_year = int(main_person["BIRTH"][:4])
-        record.update({f"PARENT1_{k}": v for k, v in create_person("부", min_age=main_birth_year - 1960, max_age=main_birth_year - 1930, jumin_disclosure=jumin_disclosure).items()})
-        record.update({f"PARENT2_{k}": v for k, v in create_person("모", min_age=main_birth_year - 1965, max_age=main_birth_year - 1935, jumin_disclosure=jumin_disclosure).items()})
+        record.update({f"PARENT1_{k}": v for k, v in create_person("부", min_age=main_birth_year - 1960, max_age=main_birth_year - 1930, mask_jumin=mask_jumin).items()})
+        record.update({f"PARENT2_{k}": v for k, v in create_person("모", min_age=main_birth_year - 1965, max_age=main_birth_year - 1935, mask_jumin=mask_jumin).items()})
 
         # 자녀가 있으면 배우자도 생성
         if children_count > 0:
-            record.update({f"SPOUSE_{k}": v for k, v in create_person("배우자", min_age=25, max_age=55, jumin_disclosure=jumin_disclosure).items()})
+            record.update({f"SPOUSE_{k}": v for k, v in create_person("배우자", min_age=25, max_age=55, mask_jumin=mask_jumin).items()})
 
         for i in range(children_count):
-            record.update({f"CHILD{i+1}_{k}": v for k, v in create_person("자녀", min_age=0, max_age=24, jumin_disclosure=jumin_disclosure).items()})
+            record.update({f"CHILD{i+1}_{k}": v for k, v in create_person("자녀", min_age=0, max_age=24, mask_jumin=mask_jumin).items()})
 
     elif doc_type == "JU":
         members_count = options.get("members_count", random.randint(1, 5))
@@ -283,7 +283,7 @@ def create_record(doc_type="GA", options=None):
         
         for i in range(2, members_count + 1):
             rel = relationships.pop(0) if relationships else "동거인"
-            member = create_person(rel, min_age=0, max_age=80, jumin_disclosure=jumin_disclosure)
+            member = create_person(rel, min_age=0, max_age=80, mask_jumin=mask_jumin)
             member['NUMBER'] = str(i)
             record.update({f"MEMBER{i}_{k}": v for k, v in member.items()})
     

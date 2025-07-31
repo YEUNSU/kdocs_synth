@@ -1,17 +1,16 @@
 #!/usr/bin/env python3
 """
-주민등록등본(JU) 대량 생성 시스템 - 새로운 파일명 규칙 적용
+주민등록등본(JU) 대량 생성 시스템
 
 요구사항:
-- 3개 등본 × 4개 바코드 조합 = 12개 템플릿
+- 3개 지역 × 4개 바코드 조합 = 12개 템플릿
 - 각 템플릿당: 1명(1장) + 2명(1장) + 3~5명(8장) = 10장
-- 총 240장 (회전 전)
+- 총 120장 (회전 전)
 """
 
 import os
 import sys
 import random
-import cv2
 from typing import List, Dict, Tuple
 
 # 모듈 경로 추가
@@ -19,6 +18,7 @@ sys.path.append('src')
 
 from templates_juga import create_template
 from data_factory import create_record
+from rotator import DocumentRotator
 
 class JUBatchGenerator:
     """주민등록등본 대량 생성기"""
@@ -28,7 +28,7 @@ class JUBatchGenerator:
         os.makedirs(output_dir, exist_ok=True)
         
         # 템플릿 설정
-        self.regions = [1, 2, 3]  # 등본1, 등본2, 등본3
+        self.regions = [1, 2, 3]
         self.barcodes = ["TY00", "TY01", "TY10", "TY11"]
         
         # 세대원 수별 생성 설정
@@ -42,61 +42,61 @@ class JUBatchGenerator:
         
         # 주민번호 공개 방식 2가지
         self.jumin_configs = [
-            {"jumin_disclosure": "CLOSE", "name": "CLOSE"},
-            {"jumin_disclosure": "OPEN", "name": "OPEN"}
+            {"mask_jumin": True, "name": "뒷자리미공개"},
+            {"mask_jumin": False, "name": "전체공개"}
         ]
+        
+        self.rotator = DocumentRotator("JU")
         
     def generate_all_ju_documents(self) -> Dict[str, int]:
         """모든 JU 문서를 생성합니다."""
         
-        stats = {"total": 0, "by_template": {}, "by_doc_kind": {}}
-        
-        # 문서 종류별 순차번호 카운터 (5자리)
+        stats = {"total": 0, "by_template": {}, "by_rotation": {}}
+        # MASK와 OPEN 파일 카운터 분리
         file_counter = {
-            "JU-1": {"CLOSE": 1, "OPEN": 1},  # 등본1
-            "JU-2": {"CLOSE": 1, "OPEN": 1},  # 등본2
-            "JU-3": {"CLOSE": 1, "OPEN": 1},  # 등본3
+            "0": {"MASK": 1, "OPEN": 1},
+            "L": {"MASK": 1, "OPEN": 1}, 
+            "R": {"MASK": 1, "OPEN": 1},
+            "180": {"MASK": 1, "OPEN": 1}
         }
         
         print("=== JU 대량 생성 시작 ===")
-        print(f"목표: {len(self.regions)} 등본 × {len(self.barcodes)} 바코드 × 10장 × 2주민번호방식 = {len(self.regions) * len(self.barcodes) * 10 * 2}장")
+        print(f"목표: {len(self.regions)} 지역 × {len(self.barcodes)} 바코드 × 10장 × 2주민번호방식 = {len(self.regions) * len(self.barcodes) * 10 * 2}장")
         
         for region in self.regions:
-            doc_kind = f"JU-{region}"  # JU-1, JU-2, JU-3
-            
             for barcode in self.barcodes:
                 template_name = f"JU_template{region}_{barcode}"
-                template_stats = self._generate_template_batch(template_name, doc_kind, file_counter)
+                template_stats = self._generate_template_batch(template_name, file_counter)
                 
                 stats["by_template"][template_name] = template_stats
                 stats["total"] += template_stats
                 
-                print(f"  ✓ {template_name} ({doc_kind}): {template_stats}장 생성")
+                print(f"  ✓ {template_name}: {template_stats}장 생성")
         
-        # 문서 종류별 통계 계산
-        for doc_kind in ["JU-1", "JU-2", "JU-3"]:
-            close_count = file_counter[doc_kind]["CLOSE"] - 1
-            open_count = file_counter[doc_kind]["OPEN"] - 1
-            stats["by_doc_kind"][doc_kind] = close_count + open_count
+        # 회전별 통계 계산
+        for rotation in ["0", "L", "R", "180"]:
+            mask_count = file_counter[rotation]["MASK"] - 1
+            open_count = file_counter[rotation]["OPEN"] - 1
+            stats["by_rotation"][rotation] = mask_count + open_count
             
         print(f"\n📊 최종 파일 카운터 상태:")
-        for doc_kind in ["JU-1", "JU-2", "JU-3"]:
-            close_count = file_counter[doc_kind]["CLOSE"] - 1
-            open_count = file_counter[doc_kind]["OPEN"] - 1
-            total_count = close_count + open_count
-            print(f"  {doc_kind}: CLOSE({close_count}) + OPEN({open_count}) = {total_count}장")
+        for rotation in ["0", "L", "R", "180"]:
+            mask_count = file_counter[rotation]["MASK"] - 1
+            open_count = file_counter[rotation]["OPEN"] - 1
+            total_count = mask_count + open_count
+            print(f"  {rotation}: MASK({mask_count}) + OPEN({open_count}) = {total_count}장")
             
         self._print_final_stats(stats)
         return stats
     
-    def _generate_template_batch(self, template_name: str, doc_kind: str, file_counter: Dict[str, int]) -> int:
+    def _generate_template_batch(self, template_name: str, file_counter: Dict[str, int]) -> int:
         """특정 템플릿의 배치를 생성합니다."""
         
         generated_count = 0
         
         # 주민번호 방식별로 생성
         for jumin_config in self.jumin_configs:
-            jumin_disclosure = jumin_config["jumin_disclosure"]
+            mask_jumin = jumin_config["mask_jumin"]
             jumin_name = jumin_config["name"]
             
             # 세대원 수별로 생성
@@ -106,12 +106,12 @@ class JUBatchGenerator:
                 
                 for i in range(count):
                     # 템플릿 생성 (세대원 수 제한)
-                    template = create_template("JU", template_name, max_members=members_count, mask_jumin=(jumin_disclosure=="CLOSE"))
+                    template = create_template("JU", template_name, max_members=members_count, mask_jumin=mask_jumin)
                     
-                    # 데이터 생성 (주민번호 공개 설정 포함)
+                    # 데이터 생성 (주민번호 마스킹 설정 포함)
                     data = create_record("JU", {
                         "members_count": members_count,
-                        "jumin_disclosure": jumin_disclosure
+                        "mask_jumin": mask_jumin
                     })
                     
                     # 디버깅: 주민번호 확인
@@ -121,33 +121,34 @@ class JUBatchGenerator:
                     # 이미지 생성
                     img = template.render(data)
                     
-                    # 새로운 파일명 규칙: JU-{문서종류}-{주민번호공개여부}-0-{순차번호5자리}
-                    sequential_number = file_counter[doc_kind][jumin_name]
-                    filename = f"{doc_kind}-{jumin_name}-0-{sequential_number:05d}.jpg"
+                    # 4방향 회전하여 저장
+                    base_filename = f"JU"
+                    jumin_suffix = "MASK" if mask_jumin else "OPEN"
+                    self.rotator.save_rotations(
+                        img, 
+                        self.output_dir, 
+                        base_filename, 
+                        file_counter,
+                        extra_suffix=jumin_suffix
+                    )
                     
-                    # 파일 저장 (0도만)
-                    filepath = os.path.join(self.output_dir, filename)
-                    cv2.imwrite(filepath, img)
-                    
-                    # 카운터 증가
-                    file_counter[doc_kind][jumin_name] += 1
                     generated_count += 1
-                    
-                    print(f"        생성: {filename}")
         
         return generated_count
     
     def _print_final_stats(self, stats: Dict):
         """최종 통계를 출력합니다."""
         print("\n=== JU 생성 완료 ===")
-        print(f"생성된 이미지: {stats['total']}장")
-        print(f"구성: 3등본 × 4바코드 × 10장 × 2주민번호방식 = {3*4*10*2}장")
-        print("\n📊 문서 종류별 통계:")
-        for doc_kind, count in stats["by_doc_kind"].items():
-            print(f"  - {doc_kind}: {count}장")
+        print(f"원본 이미지: {stats['total']}장")
+        print(f"4방향 회전 이미지: {stats['total'] * 4}장")
+        print(f"구성: 3지역 × 4바코드 × 10장 × 2주민번호방식 = {3*4*10*2}장")
+        print("\n📊 회전별 통계:")
+        for rotation, count in stats["by_rotation"].items():
+            rotation_name = {"0": "정상", "L": "왼쪽90°", "R": "오른쪽90°", "180": "180°"}[rotation]
+            print(f"  - {rotation_name}: {count}장")
         
         print(f"\n📁 저장 위치: {self.output_dir}/")
-        print(f"📋 총 학습용 이미지: {stats['total']}장 (회전 전)")
+        print(f"📋 총 학습용 이미지: {stats['total'] * 4}장")
 
 def main():
     """메인 실행 함수"""
