@@ -1,0 +1,136 @@
+field_boxes:
+    BASE_ADDRESS:
+    - 289
+    - 232
+    - 1012
+    - 283
+    APPLICANT:
+    - 885
+    - 1307
+    - 993
+    - 1330
+    MAIN_RELATION:
+    - 113
+    - 364
+    - 193
+    - 414
+    MAIN_NAME:
+    - 192
+    - 363
+    - 461
+    - 415
+    MAIN_BIRTH:
+    - 463
+    - 363
+    - 668
+    - 414
+    MAIN_JUMIN:
+    - 669
+    - 362
+    - 853
+    - 414
+    MAIN_GENDER:
+    - 854
+    - 363
+    - 934
+    - 414
+    MAIN_ORIGIN:
+    - 934
+    - 362
+    - 1012
+    - 414
+    PARENT1_RELATION:
+    - 113
+    - 576
+    - 192
+    - 627
+    PARENT1_NAME:
+    - 194
+    - 576
+    - 462
+    - 628
+    PARENT1_BIRTH:
+    - 463
+    - 575
+    - 668
+    - 628
+    PARENT1_JUMIN:
+    - 669
+    - 575
+    - 853
+    - 627
+    PARENT1_GENDER:
+    - 854
+    - 575
+    - 932
+    - 628
+    PARENT1_ORIGIN:
+    - 933
+    - 575
+    - 1012
+    - 628
+    PARENT2_RELATION:
+    - 112
+    - 627
+    - 191
+    - 682
+    PARENT2_NAME:
+    - 193
+    - 627
+    - 462
+    - 682
+    PARENT2_BIRTH:
+    - 462
+    - 628
+    - 668
+    - 681
+    PARENT2_JUMIN:
+    - 669
+    - 627
+    - 854
+    - 682
+    PARENT2_GENDER:
+    - 853
+    - 627
+    - 932
+    - 681
+    PARENT2_ORIGIN:
+    - 932
+    - 627
+    - 1012
+    - 682
+    SPOUSE_RELATION:
+    - 116
+    - 698
+    - 193
+    - 753
+    SPOUSE_NAME:
+    - 193
+    - 698
+    - 463
+    - 753
+    SPOUSE_BIRTH:
+    - 465
+    - 697
+    - 672
+    - 753
+    SPOUSE_JUMIN:
+    - 672
+    - 697
+    - 856
+    - 754
+    SPOUSE_GENDER:
+    - 858
+    - 697
+    - 936
+    - 754
+    SPOUSE_ORIGIN:
+    - 936
+    - 698
+    - 1012
+    - 753
+meta:
+    source_image: GA_template2_child0.jpg
+    extraction_date: '2025-07-30 00:10:11'
+    doc_type: 가족관계증명서 (GA)
+    field_count: 26

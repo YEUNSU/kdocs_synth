@@ -1,0 +1,286 @@
+field_boxes:
+    ISSUER_TOP:
+    - 691
+    - 198
+    - 948
+    - 235
+    ISSUER_BOTTOM:
+    - 538
+    - 1090
+    - 850
+    - 1140
+    APPLICANT:
+    - 530
+    - 131
+    - 654
+    - 159
+    APPLICANT_BIRTH:
+    - 650
+    - 122
+    - 850
+    - 159
+    MAIN_NAME:
+    - 239
+    - 235
+    - 388
+    - 285
+    MAIN_NAME_CN:
+    - 397
+    - 235
+    - 549
+    - 287
+    HOUSEHOLD_REASON:
+    - 714
+    - 235
+    - 948
+    - 262
+    HOUSEHOLD_DATE:
+    - 714
+    - 255
+    - 950
+    - 285
+    MAIN_ADDRESS:
+    - 130
+    - 334
+    - 549
+    - 381
+    MAIN_EVENT_DATE:
+    - 710
+    - 336
+    - 817
+    - 361
+    MAIN_REPORT_DATE:
+    - 817
+    - 336
+    - 950
+    - 362
+    MEMBER1_NUMBER:
+    - 68
+    - 479
+    - 132
+    - 529
+    MEMBER1_RELATION:
+    - 130
+    - 477
+    - 224
+    - 531
+    MEMBER1_NAME:
+    - 220
+    - 479
+    - 370
+    - 507
+    MEMBER1_JUMIN:
+    - 220
+    - 503
+    - 370
+    - 531
+    MEMBER1_NAME_CN:
+    - 345
+    - 479
+    - 552
+    - 507
+    MEMBER1_EVENT_DATE:
+    - 552
+    - 479
+    - 671
+    - 508
+    MEMBER1_REPORT_DATE:
+    - 672
+    - 479
+    - 807
+    - 508
+    MEMBER1_STATUS:
+    - 552
+    - 500
+    - 808
+    - 529
+    MEMBER1_CHANGE_REASON:
+    - 807
+    - 481
+    - 949
+    - 530
+    MEMBER2_NUMBER:
+    - 67
+    - 530
+    - 130
+    - 578
+    MEMBER2_RELATION:
+    - 129
+    - 527
+    - 226
+    - 579
+    MEMBER2_NAME:
+    - 220
+    - 529
+    - 370
+    - 556
+    MEMBER2_JUMIN:
+    - 220
+    - 551
+    - 370
+    - 581
+    MEMBER2_NAME_CN:
+    - 344
+    - 530
+    - 551
+    - 556
+    MEMBER2_EVENT_DATE:
+    - 551
+    - 528
+    - 671
+    - 556
+    MEMBER2_REPORT_DATE:
+    - 669
+    - 530
+    - 807
+    - 556
+    MEMBER2_STATUS:
+    - 548
+    - 547
+    - 807
+    - 582
+    MEMBER2_CHANGE_REASON:
+    - 806
+    - 528
+    - 950
+    - 582
+    MEMBER3_NUMBER:
+    - 65
+    - 579
+    - 128
+    - 628
+    MEMBER3_RELATION:
+    - 128
+    - 575
+    - 226
+    - 629
+    MEMBER3_NAME:
+    - 220
+    - 577
+    - 370
+    - 606
+    MEMBER3_JUMIN:
+    - 220
+    - 604
+    - 370
+    - 628
+    MEMBER3_NAME_CN:
+    - 346
+    - 576
+    - 545
+    - 606
+    MEMBER3_EVENT_DATE:
+    - 544
+    - 579
+    - 671
+    - 606
+    MEMBER3_REPORT_DATE:
+    - 668
+    - 579
+    - 806
+    - 606
+    MEMBER3_STATUS:
+    - 545
+    - 598
+    - 806
+    - 628
+    MEMBER3_CHANGE_REASON:
+    - 806
+    - 582
+    - 950
+    - 629
+    MEMBER4_NUMBER:
+    - 65
+    - 628
+    - 128
+    - 674
+    MEMBER4_RELATION:
+    - 130
+    - 624
+    - 225
+    - 677
+    MEMBER4_NAME:
+    - 220
+    - 628
+    - 370
+    - 652
+    MEMBER4_JUMIN:
+    - 220
+    - 649
+    - 370
+    - 677
+    MEMBER4_NAME_CN:
+    - 345
+    - 630
+    - 542
+    - 653
+    MEMBER4_EVENT_DATE:
+    - 545
+    - 628
+    - 669
+    - 655
+    MEMBER4_REPORT_DATE:
+    - 668
+    - 628
+    - 804
+    - 655
+    MEMBER4_STATUS:
+    - 545
+    - 645
+    - 804
+    - 677
+    MEMBER4_CHANGE_REASON:
+    - 804
+    - 628
+    - 950
+    - 677
+    MEMBER5_NUMBER:
+    - 65
+    - 675
+    - 128
+    - 727
+    MEMBER5_RELATION:
+    - 128
+    - 672
+    - 225
+    - 727
+    MEMBER5_NAME:
+    - 220
+    - 674
+    - 370
+    - 703
+    MEMBER5_JUMIN:
+    - 220
+    - 699
+    - 370
+    - 726
+    MEMBER5_NAME_CN:
+    - 343
+    - 674
+    - 547
+    - 704
+    MEMBER5_EVENT_DATE:
+    - 547
+    - 674
+    - 672
+    - 704
+    MEMBER5_REPORT_DATE:
+    - 671
+    - 676
+    - 802
+    - 701
+    MEMBER5_STATUS:
+    - 547
+    - 697
+    - 802
+    - 727
+    MEMBER5_CHANGE_REASON:
+    - 804
+    - 674
+    - 950
+    - 727
+meta:
+    source_image: JU_template2_TY01.jpg
+    extraction_date: '2025-07-30 16:23:09'
+    doc_type: 주민등록등본 (JU)
+    field_count: 54
